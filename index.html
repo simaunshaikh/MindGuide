@@ -1,80 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindGuide 2.0 - Daily Wellness</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
+<section id="music-guide" class="card">
+    <h2><i class="fab fa-spotify"></i> Mood Music Player</h2>
+    <p>The suggested playlist will appear below based on your last mood check-in.</p>
 
-    <header>
-        <h1>MindGuide 2.0</h1>
-        <p>Your daily companion for productivity and peace.</p>
-    </header>
+    <h3 id="player-title" style="margin-top: 15px; color: var(--accent-color);">Select a mood above to load music!</h3>
 
-    <main>
+    <div class="spotify-players">
+        <iframe id="happy-player" class="mood-player" style="border-radius:12px; display: none;" 
+            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" 
+            width="100%" height="352" frameBorder="0" allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+        <iframe id="stressed-player" class="mood-player" style="border-radius:12px; display: none;" 
+            src="https://open.spotify.com/embed/playlist/37i9dQZF1DX0BxnsZ7yWvg?utm_source=generator" 
+            width="100%" height="352" frameBorder="0" allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         
-        <section id="mood-tracker" class="card">
-            <h2><i class="fas fa-heart"></i> Daily Check-in</h2>
-            <p>How are you feeling today?</p>
-            <div class="mood-options">
-                <button class="mood-btn" data-mood="Happy">😊 Happy</button>
-                <button class="mood-btn" data-mood="Content">😌 Content</button>
-                <button class="mood-btn" data-mood="Stressed">😰 Stressed</button>
-                <button class="mood-btn" data-mood="Tired">😴 Tired</button>
-                <button class="mood-btn" data-mood="Anxious">😟 Anxious</button>
-            </div>
-            
-            <textarea id="journal-entry" placeholder="What's on your mind? (Optional entry)"></textarea>
-            <button id="save-mood-btn">Save Check-in</button>
-            <p id="save-message" class="message"></p>
-
-            <details class="history-toggle">
-                <summary>View History</summary>
-                <ul id="mood-history-list"></ul>
-            </details>
-        </section>
-
-        <section id="focus-timer" class="card">
-            <h2><i class="fas fa-clock"></i> Focus Timer</h2>
-            <div class="timer-display" id="timer-display">25:00</div>
-            <div class="timer-controls">
-                <button id="start-btn" class="control-btn"><i class="fas fa-play"></i> Start</button>
-                <button id="reset-btn" class="control-btn"><i class="fas fa-redo"></i> Reset</button>
-            </div>
-            <p class="timer-mode-text">Mode: <span id="current-mode">Work (25 min)</span></p>
-        </section>
-        
-        <section id="music-guide" class="card">
-            <h2><i class="fab fa-spotify"></i> Mood Music</h2>
-            <p>Select a playlist that matches your current state (integrates with Spotify in Settings).</p>
-            <div class="music-options">
-                <button class="music-btn">Uplifting Beats</button>
-                <button class="music-btn">Calming Lofi</button>
-                <button class="music-btn">Focus Ambience</button>
-            </div>
-        </section>
-
-        <section id="career-guide" class="card">
-            <h2><i class="fas fa-briefcase"></i> Career Recommender</h2>
-            <p>What are your main interests?</p>
-            <div class="interest-options">
-                <span class="tag">Programming</span>
-                <span class="tag">Design</span>
-                <span class="tag">Marketing</span>
-                <span class="tag">Writing</span>
-            </div>
-            <button class="control-btn">Get Suggested Path</button>
-        </section>
-
-    </main>
-
-    <footer>
-        <p>&copy; 2024 MindGuide. Focus on your well-being.</p>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
-</html>
+        <iframe id="calm-player" class="mood-player" style="border-radius:12px; display: none;" 
+            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" 
+            width="100%" height="352" frameBorder="0" allowfullscreen="" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+</section>
