@@ -1,58 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mind Guide</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindGuide 2.0 - Daily Wellness</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
-<header>Mind Guide</header>
+    <header>
+        <h1>MindGuide 2.0</h1>
+        <p>Your daily companion for productivity and peace.</p>
+    </header>
 
-<nav>
-    <button id="therapyBtn" class="active">Therapy & Music</button>
-    <button id="careerBtn">Career Recommender</button>
-    <button id="settingsBtn">Settings</button>
-</nav>
+    <main>
+        
+        <section id="mood-tracker" class="card">
+            <h2><i class="fas fa-heart"></i> Daily Check-in</h2>
+            <p>How are you feeling today?</p>
+            <div class="mood-options">
+                <button class="mood-btn" data-mood="Happy">😊 Happy</button>
+                <button class="mood-btn" data-mood="Content">😌 Content</button>
+                <button class="mood-btn" data-mood="Stressed">😰 Stressed</button>
+                <button class="mood-btn" data-mood="Tired">😴 Tired</button>
+                <button class="mood-btn" data-mood="Anxious">😟 Anxious</button>
+            </div>
+            
+            <textarea id="journal-entry" placeholder="What's on your mind? (Optional entry)"></textarea>
+            <button id="save-mood-btn">Save Check-in</button>
+            <p id="save-message" class="message"></p>
 
-<section id="therapy" class="active">
-    <h2>Therapy & Mood Music</h2>
-    <p>Select your mood:</p>
-    <div>
-        <button class="mood-btn" data-mood="happy">😊 Happy</button>
-        <button class="mood-btn" data-mood="sad">😢 Sad</button>
-        <button class="mood-btn" data-mood="stressed">😰 Stressed</button>
-    </div>
-    <div class="output" id="therapyOutput"></div>
-    <iframe id="spotifyPlayer" src="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-</section>
+            <details class="history-toggle">
+                <summary>View History</summary>
+                <ul id="mood-history-list"></ul>
+            </details>
+        </section>
 
-<section id="career">
-    <h2>Career Recommender</h2>
-    <p>Select your interests/strengths:</p>
-    <div>
-        <input type="checkbox" class="career-checkbox" value="Programming"> Programming<br>
-        <input type="checkbox" class="career-checkbox" value="Design"> Design<br>
-        <input type="checkbox" class="career-checkbox" value="Marketing"> Marketing<br>
-        <input type="checkbox" class="career-checkbox" value="Writing"> Writing<br>
-        <input type="checkbox" class="career-checkbox" value="Leadership"> Leadership<br>
-    </div>
-    <button id="careerBtnCompute">Get Suggested Path</button>
-    <div class="output" id="careerOutput"></div>
-</section>
+        <section id="focus-timer" class="card">
+            <h2><i class="fas fa-clock"></i> Focus Timer</h2>
+            <div class="timer-display" id="timer-display">25:00</div>
+            <div class="timer-controls">
+                <button id="start-btn" class="control-btn"><i class="fas fa-play"></i> Start</button>
+                <button id="reset-btn" class="control-btn"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+            <p class="timer-mode-text">Mode: <span id="current-mode">Work (25 min)</span></p>
+        </section>
+        
+        <section id="music-guide" class="card">
+            <h2><i class="fab fa-spotify"></i> Mood Music</h2>
+            <p>Select a playlist that matches your current state (integrates with Spotify in Settings).</p>
+            <div class="music-options">
+                <button class="music-btn">Uplifting Beats</button>
+                <button class="music-btn">Calming Lofi</button>
+                <button class="music-btn">Focus Ambience</button>
+            </div>
+        </section>
 
-<section id="settings">
-    <h2>Settings</h2>
-    <p>Paste your own Spotify link for each mood:</p>
-    <label>Happy:</label><input type="text" id="happyLink" placeholder="Spotify track/playlist/album link"><br>
-    <label>Sad:</label><input type="text" id="sadLink" placeholder="Spotify track/playlist/album link"><br>
-    <label>Stressed:</label><input type="text" id="stressedLink" placeholder="Spotify track/playlist/album link"><br>
-    <button id="saveSettings">Save Links</button>
-    <div class="output" id="settingsOutput"></div>
-</section>
+        <section id="career-guide" class="card">
+            <h2><i class="fas fa-briefcase"></i> Career Recommender</h2>
+            <p>What are your main interests?</p>
+            <div class="interest-options">
+                <span class="tag">Programming</span>
+                <span class="tag">Design</span>
+                <span class="tag">Marketing</span>
+                <span class="tag">Writing</span>
+            </div>
+            <button class="control-btn">Get Suggested Path</button>
+        </section>
 
-<script src="script.js"></script>
+    </main>
 
+    <footer>
+        <p>&copy; 2024 MindGuide. Focus on your well-being.</p>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
