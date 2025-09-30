@@ -31,21 +31,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- 2. Mood Check-in & Music Player Logic ---
-
-    // Mood Button Selection, Music Loading, and Launch
+    // --- 2. Unified Mood Selection Logic ---
+    
+    // Selects mood buttons on BOTH views
     document.querySelectorAll('.mood-btn').forEach(button => {
         button.addEventListener('click', function() {
-            // UI Selection Logic
-            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            const currentView = this.closest('.view').id;
+            
+            // Clear selection only within the current view's mood options
+            this.closest('.mood-options').querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            
             this.classList.add('selected');
             selectedMood = this.getAttribute('data-mood');
             
-            // Show the correct music player
-            updateMusicPlayer(selectedMood); 
-
-            // Save the mood entry automatically (without journal text)
-            saveMoodEntryOnly(selectedMood);
+            if (currentView === 'mood-view') {
+                // If on Mood View, update music and save history instantly
+                updateMusicPlayer(selectedMood); 
+                saveMoodEntryOnly(selectedMood);
+            }
+            // If on Journal View, the mood will be saved when the save button is clicked
         });
     });
     
@@ -54,13 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const playerTitle = document.getElementById('player-title');
         const players = document.querySelectorAll('.mood-player');
 
-        // Hide all players first
         players.forEach(p => p.style.display = 'none');
         
         let playerToShow = null;
         let titleText = '';
 
-        // Determine which player to show
         if (mood === 'Happy') {
             playerToShow = document.getElementById('happy-player');
             titleText = 'Playlist Loaded: High Energy & Uplifting';
@@ -72,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
             titleText = 'Playlist Loaded: Lo-Fi & Relaxation';
         }
 
-        // Display the selected player
         if (playerToShow) {
             playerToShow.style.display = 'block';
             playerTitle.textContent = titleText;
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Save only the mood check-in (no journal text needed)
+    // Save only the mood check-in for the history list
     function saveMoodEntryOnly(mood) {
         const now = new Date();
         const dateString = now.toLocaleDateString();
@@ -99,17 +100,15 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.push(newEntry);
         localStorage.setItem('mindGuideMoodHistory', JSON.stringify(entries));
 
-        loadMoodHistory(); // Refresh history instantly
+        loadMoodHistory();
     }
 
     // Load Mood History
     function loadMoodHistory() {
         const historyList = document.getElementById('mood-history-list');
-        historyList.innerHTML = ''; // Clear existing list
+        historyList.innerHTML = '';
         
         let entries = JSON.parse(localStorage.getItem('mindGuideMoodHistory')) || [];
-        
-        // Show only the last 7 entries
         const lastSeven = entries.slice(-7).reverse();
 
         if (lastSeven.length === 0) {
@@ -131,6 +130,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveJournalEntry() {
         const entry = document.getElementById('journal-entry').value.trim();
         const saveMessage = document.getElementById('journal-save-message');
+        
+        // **GET SELECTED MOOD FROM JOURNAL VIEW**
+        const moodButton = document.querySelector('#journal-view .journal-mood-btn.selected');
+
+
+        if (!moodButton) {
+             saveMessage.textContent = 'Please select a mood first.';
+            saveMessage.style.color = 'red';
+            saveMessage.style.display = 'block';
+            setTimeout(() => saveMessage.style.display = 'none', 2000);
+            return;
+        }
 
         if (!entry) {
             saveMessage.textContent = 'Please write something before saving.';
@@ -148,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newEntry = {
             date: dateString,
             time: now.toLocaleTimeString(),
+            mood: moodButton.getAttribute('data-mood'), // Save the selected mood!
             entry: entry,
         };
         
@@ -161,7 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Reset UI
         document.getElementById('journal-entry').value = '';
-        loadJournalHistory(); // Refresh history
+        document.querySelectorAll('#journal-view .journal-mood-btn').forEach(btn => btn.classList.remove('selected'));
+        loadJournalHistory();
         
         setTimeout(() => saveMessage.style.display = 'none', 2000);
     }
@@ -169,11 +182,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load Journal History
     function loadJournalHistory() {
         const historyList = document.getElementById('journal-history-list');
-        historyList.innerHTML = ''; // Clear existing list
+        historyList.innerHTML = '';
         
         let entries = JSON.parse(localStorage.getItem('mindGuideJournalEntries')) || [];
-        
-        // Show only the last 5 entries
         const lastFive = entries.slice(-5).reverse();
 
         if (lastFive.length === 0) {
@@ -183,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         lastFive.forEach(item => {
             const li = document.createElement('li');
-            li.textContent = `${item.date} - "${item.entry.substring(0, 50)}${item.entry.length > 50 ? '...' : ''}"`;
+            li.textContent = `${item.date} (${item.mood}): "${item.entry.substring(0, 50)}${item.entry.length > 50 ? '...' : ''}"`;
             historyList.appendChild(li);
         });
     }
