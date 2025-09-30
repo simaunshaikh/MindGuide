@@ -1,106 +1,195 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindGuide - Mood & Music</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- Global Variables ---
+    let selectedMood = null;
 
-    <header>
-        <h1>MindGuide</h1>
-        <p>Your daily check-in for well-being.</p>
-        <nav class="tabs">
-            <button class="tab-btn active" data-view="mood-view"><i class="fas fa-heart"></i> Mood Check-in</button>
-            <button class="tab-btn" data-view="journal-view"><i class="fas fa-book"></i> Daily Journal</button>
-        </nav>
-    </header>
+    // --- 1. View Switching (SPA Logic) ---
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetViewId = this.getAttribute('data-view');
+            showView(targetViewId);
+            
+            // Re-load history every time we switch to ensure data is fresh
+            if (targetViewId === 'mood-view') {
+                loadMoodHistory();
+            } else if (targetViewId === 'journal-view') {
+                loadJournalHistory();
+            }
+        });
+    });
 
-    <main>
+    function showView(viewId) {
+        // Update button styles
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.tab-btn[data-view="${viewId}"]`).classList.add('active');
+
+        // Hide all views
+        document.querySelectorAll('.view').forEach(view => view.style.display = 'none');
+
+        // Show target view
+        document.getElementById(viewId).style.display = 'block';
+    }
+
+
+    // --- 2. Mood Check-in & Music Player Logic ---
+
+    // Mood Button Selection, Music Loading, and Launch
+    document.querySelectorAll('.mood-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // UI Selection Logic
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedMood = this.getAttribute('data-mood');
+            
+            // Show the correct music player
+            updateMusicPlayer(selectedMood); 
+
+            // Save the mood entry automatically (without journal text)
+            saveMoodEntryOnly(selectedMood);
+        });
+    });
+    
+    // Function to show the correct Spotify player
+    function updateMusicPlayer(mood) {
+        const playerTitle = document.getElementById('player-title');
+        const players = document.querySelectorAll('.mood-player');
+
+        // Hide all players first
+        players.forEach(p => p.style.display = 'none');
         
-        <!-- ============================================== -->
-        <!-- MOOD CHECK-IN & MUSIC VIEW (Default Active) -->
-        <!-- ============================================== -->
-        <div id="mood-view" class="view">
-            <section class="card">
-                <h2><i class="fas fa-music"></i> Select Your Mood</h2>
-                <p>How are you feeling right now? Music will play automatically based on your choice.</p>
-                <div class="mood-options">
-                    <button class="mood-btn" data-mood="Happy">😊 Happy</button>
-                    <button class="mood-btn" data-mood="Content">😌 Content</button>
-                    <button class="mood-btn" data-mood="Stressed">😰 Stressed</button>
-                    <button class="mood-btn" data-mood="Tired">😴 Tired</button>
-                    <button class="mood-btn" data-mood="Anxious">😟 Anxious</button>
-                </div>
-                
-                <!-- Music Player Area -->
-                <div id="music-player-area">
-                    <h3 id="player-title" style="margin-top: 20px; color: var(--accent-color);">Please select a mood above.</h3>
-                    
-                    <div class="spotify-players">
-                        <!-- IMPORTANT: REPLACE THE 'src' ATTRIBUTE WITH YOUR ACTUAL SPOTIFY EMBED URLS! -->
+        let playerToShow = null;
+        let titleText = '';
 
-                        <!-- Happy Playlist Player (Shown for Happy) -->
-                        <iframe id="happy-player" class="mood-player" style="border-radius:12px; display: none;" 
-                            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" 
-                            width="100%" height="352" frameBorder="0" allowfullscreen="" 
-                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        // Determine which player to show
+        if (mood === 'Happy') {
+            playerToShow = document.getElementById('happy-player');
+            titleText = 'Playlist Loaded: High Energy & Uplifting';
+        } else if (mood === 'Stressed' || mood === 'Anxious') {
+            playerToShow = document.getElementById('stressed-player');
+            titleText = 'Playlist Loaded: Deep Focus & Calm';
+        } else if (mood === 'Tired' || mood === 'Content') {
+            playerToShow = document.getElementById('calm-player');
+            titleText = 'Playlist Loaded: Lo-Fi & Relaxation';
+        }
 
-                        <!-- Stressed/Anxious Playlist Player -->
-                        <iframe id="stressed-player" class="mood-player" style="border-radius:12px; display: none;" 
-                            src="https://open.spotify.com/embed/playlist/37i9dQZF1DX0BxnsZ7yWvg?utm_source=generator" 
-                            width="100%" height="352" frameBorder="0" allowfullscreen="" 
-                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                        
-                        <!-- Tired/Calm Playlist Player (Shown for Tired/Content) -->
-                        <iframe id="calm-player" class="mood-player" style="border-radius:12px; display: none;" 
-                            src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" 
-                            width="100%" height="352" frameBorder="0" allowfullscreen="" 
-                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                    </div>
-                </div>
+        // Display the selected player
+        if (playerToShow) {
+            playerToShow.style.display = 'block';
+            playerTitle.textContent = titleText;
+            playerTitle.style.color = 'var(--primary-color)';
+        } else {
+            playerTitle.textContent = 'Playlist not available for this mood.';
+            playerTitle.style.color = 'red';
+        }
+    }
 
-                <!-- Mood History -->
-                <div class="history-container">
-                    <h3><i class="fas fa-list"></i> Recent Mood History</h3>
-                    <ul id="mood-history-list">
-                        <li>History loading...</li>
-                    </ul>
-                </div>
-            </section>
-        </div>
+    // Save only the mood check-in (no journal text needed)
+    function saveMoodEntryOnly(mood) {
+        const now = new Date();
+        const dateString = now.toLocaleDateString();
+        
+        let entries = JSON.parse(localStorage.getItem('mindGuideMoodHistory')) || [];
 
+        const newEntry = {
+            date: dateString,
+            time: now.toLocaleTimeString(),
+            mood: mood,
+        };
+        
+        entries.push(newEntry);
+        localStorage.setItem('mindGuideMoodHistory', JSON.stringify(entries));
 
-        <!-- ============================================== -->
-        <!-- JOURNAL ENTRY VIEW (Hidden by Default) -->
-        <!-- ============================================== -->
-        <div id="journal-view" class="view" style="display: none;">
-            <section class="card">
-                <h2><i class="fas fa-pencil-alt"></i> Write Your Journal Entry</h2>
-                <p>Reflect on your day and save your thoughts for persistent record keeping.</p>
+        loadMoodHistory(); // Refresh history instantly
+    }
 
-                <textarea id="journal-entry" placeholder="Today, I feel..."></textarea>
-                <button id="save-journal-btn">Save Journal Entry</button>
-                <p id="journal-save-message" class="message"></p>
+    // Load Mood History
+    function loadMoodHistory() {
+        const historyList = document.getElementById('mood-history-list');
+        historyList.innerHTML = ''; // Clear existing list
+        
+        let entries = JSON.parse(localStorage.getItem('mindGuideMoodHistory')) || [];
+        
+        // Show only the last 7 entries
+        const lastSeven = entries.slice(-7).reverse();
 
-                <div class="history-container">
-                    <h3><i class="fas fa-calendar-alt"></i> Recent Entries</h3>
-                    <ul id="journal-history-list">
-                        <li>Entries loading...</li>
-                    </ul>
-                </div>
-            </section>
-        </div>
+        if (lastSeven.length === 0) {
+            historyList.innerHTML = '<li>No mood history yet. Make a check-in!</li>';
+            return;
+        }
 
-    </main>
+        lastSeven.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.date} at ${item.time} - ${item.mood}`;
+            historyList.appendChild(li);
+        });
+    }
 
-    <footer>
-        <p>&copy; 2024 MindGuide. Focus on your well-being.</p>
-    </footer>
+    // --- 3. Daily Journal Logic ---
 
-    <script src="script.js"></script>
-</body>
-</html>
+    document.getElementById('save-journal-btn').addEventListener('click', saveJournalEntry);
+
+    function saveJournalEntry() {
+        const entry = document.getElementById('journal-entry').value.trim();
+        const saveMessage = document.getElementById('journal-save-message');
+
+        if (!entry) {
+            saveMessage.textContent = 'Please write something before saving.';
+            saveMessage.style.color = 'red';
+            saveMessage.style.display = 'block';
+            setTimeout(() => saveMessage.style.display = 'none', 2000);
+            return;
+        }
+
+        const now = new Date();
+        const dateString = now.toLocaleDateString();
+        
+        let entries = JSON.parse(localStorage.getItem('mindGuideJournalEntries')) || [];
+
+        const newEntry = {
+            date: dateString,
+            time: now.toLocaleTimeString(),
+            entry: entry,
+        };
+        
+        entries.push(newEntry);
+        localStorage.setItem('mindGuideJournalEntries', JSON.stringify(entries));
+
+        // Display success message
+        saveMessage.textContent = 'Journal Entry Saved!';
+        saveMessage.style.color = 'var(--primary-color)';
+        saveMessage.style.display = 'block';
+
+        // Reset UI
+        document.getElementById('journal-entry').value = '';
+        loadJournalHistory(); // Refresh history
+        
+        setTimeout(() => saveMessage.style.display = 'none', 2000);
+    }
+    
+    // Load Journal History
+    function loadJournalHistory() {
+        const historyList = document.getElementById('journal-history-list');
+        historyList.innerHTML = ''; // Clear existing list
+        
+        let entries = JSON.parse(localStorage.getItem('mindGuideJournalEntries')) || [];
+        
+        // Show only the last 5 entries
+        const lastFive = entries.slice(-5).reverse();
+
+        if (lastFive.length === 0) {
+            historyList.innerHTML = '<li>No journal entries yet.</li>';
+            return;
+        }
+
+        lastFive.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.date} - "${item.entry.substring(0, 50)}${item.entry.length > 50 ? '...' : ''}"`;
+            historyList.appendChild(li);
+        });
+    }
+
+    // --- 4. Initial Load ---
+    loadMoodHistory();
+    loadJournalHistory();
+
+});
