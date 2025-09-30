@@ -3,75 +3,109 @@
 document.addEventListener('DOMContentLoaded', () => {
     let selectedMood = null;
 
-    // Mood Button Selection
+    // Mood Button Selection, Music Loading, and Launch
     document.querySelectorAll('.mood-btn').forEach(button => {
         button.addEventListener('click', function() {
-            // Remove 'selected' from all buttons
+            // UI Selection Logic
             document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
-            
-            // Add 'selected' to the clicked button
             this.classList.add('selected');
             selectedMood = this.getAttribute('data-mood');
+            
+            // Call Suggestion and LAUNCH MUSIC
+            updateMusicPlayer(selectedMood); 
         });
     });
 
-    // Save Button Logic
+    // Function to show the correct Spotify player
+    function updateMusicPlayer(mood) {
+        const playerTitle = document.getElementById('player-title');
+        const players = document.querySelectorAll('.mood-player');
+
+        // Hide all players first
+        players.forEach(p => p.style.display = 'none');
+        
+        let playerToShow = null;
+        let titleText = '';
+
+        // Determine which player to show
+        if (mood === 'Happy') {
+            playerToShow = document.getElementById('happy-player');
+            titleText = 'Playlist Loaded: High Energy & Uplifting';
+        } else if (mood === 'Stressed' || mood === 'Anxious') {
+            playerToShow = document.getElementById('stressed-player');
+            titleText = 'Playlist Loaded: Deep Focus & Calm';
+        } else if (mood === 'Tired' || mood === 'Content') {
+            playerToShow = document.getElementById('calm-player');
+            titleText = 'Playlist Loaded: Lo-Fi & Relaxation';
+        }
+
+        // Display the selected player
+        if (playerToShow) {
+            playerToShow.style.display = 'block';
+            playerTitle.textContent = titleText;
+            playerTitle.style.color = 'var(--primary-color)';
+        } else {
+            playerTitle.textContent = 'Playlist not available for this mood.';
+            playerTitle.style.color = 'red';
+        }
+    }
+
+
+    // Save Button Logic (Existing)
     document.getElementById('save-mood-btn').addEventListener('click', saveMoodEntry);
     
     function saveMoodEntry() {
         const entry = document.getElementById('journal-entry').value.trim();
         const saveMessage = document.getElementById('save-message');
+        const journalButton = document.querySelector('.mood-btn.selected');
 
-        if (!selectedMood) {
+
+        if (!journalButton) {
             saveMessage.textContent = 'Please select a mood first.';
             saveMessage.style.color = 'red';
             saveMessage.style.display = 'block';
             setTimeout(() => saveMessage.style.display = 'none', 2000);
             return;
         }
-
+        
+        // ... (Journal saving logic)
         const now = new Date();
         const dateString = now.toLocaleDateString();
-
-        // Load existing entries
         let entries = JSON.parse(localStorage.getItem('mindGuideJournal')) || [];
-
-        // Create new entry
         const newEntry = {
             date: dateString,
             time: now.toLocaleTimeString(),
-            mood: selectedMood,
+            mood: journalButton.getAttribute('data-mood'),
             entry: entry || 'No written reflection.',
         };
-        
-        // Add new entry and save
         entries.push(newEntry);
         localStorage.setItem('mindGuideJournal', JSON.stringify(entries));
 
-        // Display success message
+        // Reset UI
         saveMessage.textContent = 'Check-in Saved!';
         saveMessage.style.color = 'var(--primary-color)';
         saveMessage.style.display = 'block';
-
-        // Reset UI
         document.getElementById('journal-entry').value = '';
         document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
         selectedMood = null;
-        loadMoodHistory(); // Refresh history
+        document.getElementById('player-title').textContent = 'Select a mood above to load music!'; 
+        
+        // Hide the players after saving the journal
+        document.querySelectorAll('.mood-player').forEach(p => p.style.display = 'none');
+
+
+        loadMoodHistory(); 
         
         setTimeout(() => saveMessage.style.display = 'none', 2000);
     }
 
-    // Load History on page load
+    // Load History on page load (Existing)
     loadMoodHistory();
 
     function loadMoodHistory() {
         const historyList = document.getElementById('mood-history-list');
-        historyList.innerHTML = ''; // Clear existing list
-        
+        historyList.innerHTML = ''; 
         let entries = JSON.parse(localStorage.getItem('mindGuideJournal')) || [];
-        
-        // Show only the last 5 entries
         const lastFive = entries.slice(-5).reverse();
 
         if (lastFive.length === 0) {
@@ -86,8 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-});
-
 
 // --- 2. Focus Timer (Pomodoro) ---
 
@@ -96,7 +128,6 @@ let timeLeft;
 let isRunning = false;
 let isWorkMode = true;
 
-// Pomodoro times in seconds
 const WORK_TIME = 25 * 60; 
 const BREAK_TIME = 5 * 60;
 
@@ -105,7 +136,7 @@ const startBtn = document.getElementById('start-btn');
 const resetBtn = document.getElementById('reset-btn');
 const currentMode = document.getElementById('current-mode');
 
-// Initialize
+// Initialize Timer
 timeLeft = WORK_TIME;
 updateDisplay();
 
@@ -116,7 +147,7 @@ function updateDisplay() {
     const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
     const seconds = String(timeLeft % 60).padStart(2, '0');
     timerDisplay.textContent = `${minutes}:${seconds}`;
-    document.title = `${minutes}:${seconds} | MindGuide Focus`;
+    document.title = `${minutes}:${seconds} | MindGuide Focus`; 
 }
 
 function toggleTimer() {
@@ -139,11 +170,6 @@ function countdown() {
         clearInterval(timer);
         isRunning = false;
         
-        // Play a simple alert sound (Optional: you can replace with a custom sound)
-        // NOTE: The user must click or interact with the page once for sound to work in modern browsers.
-        // new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3').play();
-
-        // Switch modes
         isWorkMode = !isWorkMode;
         
         if (isWorkMode) {
@@ -157,7 +183,6 @@ function countdown() {
         updateDisplay();
         startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
         
-        // Automatically start the next session after a short pause
         setTimeout(toggleTimer, 3000);
     }
 }
@@ -171,3 +196,4 @@ function resetTimer() {
     startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
     currentMode.textContent = 'Work (25 min)';
 }
+});
