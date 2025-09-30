@@ -4,7 +4,7 @@
     --bg-light: #f4f7f6;
     --text-dark: #333;
     --card-bg: #ffffff;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -18,13 +18,13 @@ body {
     background-color: var(--bg-light);
     color: var(--text-dark);
     line-height: 1.6;
-    padding-bottom: 50px; /* Space for footer */
+    padding-bottom: 50px; 
 }
 
 header {
     background-color: var(--primary-color);
     color: white;
-    padding: 20px 15px;
+    padding: 20px 15px 0; /* Reduced bottom padding */
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -56,23 +56,58 @@ main {
     padding-bottom: 10px;
 }
 
-/* --- Buttons and Controls --- */
-
-button {
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 15px;
-    transition: background-color 0.2s, transform 0.1s;
-    font-weight: bold;
+/* --- Tabs/Navigation --- */
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
 }
 
-/* Mood Options */
+.tab-btn {
+    flex: 1;
+    max-width: 250px;
+    background-color: #5cb85c; /* Lighter shade of primary */
+    color: white;
+    padding: 12px 15px;
+    margin: 0 5px;
+    border-radius: 8px 8px 0 0;
+    font-size: 1em;
+    transition: background-color 0.2s;
+}
+
+.tab-btn:hover {
+    background-color: #4cae4c;
+}
+
+.tab-btn.active {
+    background-color: var(--card-bg);
+    color: var(--primary-color);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    /* Bring the active tab forward and make it look connected */
+    border-bottom: none;
+}
+
+.view {
+    padding-top: 5px; /* Visual spacing below tabs */
+}
+
+/* --- Mood Options --- */
+.mood-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
 .mood-options .mood-btn {
+    flex: 1;
+    min-width: 100px;
     background-color: #e0e0e0;
     color: var(--text-dark);
-    margin: 5px;
-    padding: 10px 12px;
+    padding: 12px 8px;
+    font-size: 1.1em;
 }
 .mood-options .mood-btn:hover {
     background-color: #d1d1d1;
@@ -81,104 +116,68 @@ button {
     background-color: var(--primary-color);
     color: white;
     box-shadow: 0 2px 5px rgba(76, 175, 80, 0.5);
+    transform: translateY(-2px);
 }
 
+/* --- Journal & Save Button --- */
 #journal-entry {
     width: 100%;
     margin: 15px 0;
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
     resize: vertical;
-    min-height: 80px;
+    min-height: 150px;
     font-family: inherit;
+    font-size: 1em;
 }
 
-#save-mood-btn {
-    background-color: var(--primary-color);
+#save-journal-btn {
+    background-color: var(--accent-color);
     color: white;
     width: 100%;
-    margin-bottom: 10px;
+    padding: 15px;
+    font-size: 1.1em;
 }
-#save-mood-btn:hover {
-    background-color: #388e3c;
+#save-journal-btn:hover {
+    background-color: #f57c00;
 }
 
 .message {
     text-align: center;
-    padding: 5px;
-    color: var(--primary-color);
+    padding: 10px;
+    font-weight: bold;
     display: none;
 }
 
-/* Focus Timer Styling */
-.timer-display {
-    font-size: 4em;
-    font-weight: 300;
-    text-align: center;
-    margin: 20px 0;
-    color: var(--accent-color);
+/* --- History/Lists --- */
+.history-container {
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
 }
 
-.timer-controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+.history-container h3 {
+    font-size: 1.2em;
+    color: #666;
     margin-bottom: 10px;
 }
 
-.control-btn {
-    flex: 1;
-    max-width: 150px;
-    background-color: var(--accent-color);
-    color: white;
-}
-.control-btn:hover {
-    background-color: #f57c00;
-}
-
-.timer-mode-text {
-    text-align: center;
-    font-style: italic;
-    color: #666;
-}
-
-/* Music and Career Tags */
-.music-options button, .interest-options .tag {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 5px 5px 5px 0;
-    border-radius: 20px;
-    background-color: #e0f2f1; /* Light cyan */
-    color: #00796b;
-    font-size: 0.9em;
-}
-
-.interest-options .tag {
-    font-weight: normal;
-}
-
-/* History */
-.history-toggle {
-    margin-top: 15px;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-}
-
-#mood-history-list {
+#mood-history-list, #journal-history-list {
     list-style: none;
-    padding: 10px 0;
+    padding: 0;
 }
 
-#mood-history-list li {
+#mood-history-list li, #journal-history-list li {
     background-color: #f9f9f9;
-    padding: 8px 12px;
+    padding: 10px 12px;
     border-radius: 6px;
-    margin-bottom: 5px;
-    border-left: 4px solid var(--primary-color);
-    font-size: 0.9em;
+    margin-bottom: 6px;
+    border-left: 4px solid var(--accent-color);
+    font-size: 0.95em;
 }
 
+/* --- Footer --- */
 footer {
     text-align: center;
     padding: 10px;
