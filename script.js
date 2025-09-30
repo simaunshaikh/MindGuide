@@ -1,70 +1,173 @@
-// Navigation
-const therapyBtn = document.getElementById('therapyBtn');
-const careerBtn = document.getElementById('careerBtn');
-const settingsBtn = document.getElementById('settingsBtn');
+// --- 1. Daily Mood Check-in & Journal ---
 
-const therapySec = document.getElementById('therapy');
-const careerSec = document.getElementById('career');
-const settingsSec = document.getElementById('settings');
+document.addEventListener('DOMContentLoaded', () => {
+    let selectedMood = null;
 
-therapyBtn.addEventListener('click', ()=>{showSection('therapy')});
-careerBtn.addEventListener('click', ()=>{showSection('career')});
-settingsBtn.addEventListener('click', ()=>{showSection('settings')});
+    // Mood Button Selection
+    document.querySelectorAll('.mood-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove 'selected' from all buttons
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            // Add 'selected' to the clicked button
+            this.classList.add('selected');
+            selectedMood = this.getAttribute('data-mood');
+        });
+    });
 
-function showSection(sec){
-    therapySec.classList.remove('active');
-    careerSec.classList.remove('active');
-    settingsSec.classList.remove('active');
-    therapyBtn.classList.remove('active');
-    careerBtn.classList.remove('active');
-    settingsBtn.classList.remove('active');
-    if(sec==='therapy'){ therapySec.classList.add('active'); therapyBtn.classList.add('active'); }
-    if(sec==='career'){ careerSec.classList.add('active'); careerBtn.classList.add('active'); }
-    if(sec==='settings'){ settingsSec.classList.add('active'); settingsBtn.classList.add('active'); }
+    // Save Button Logic
+    document.getElementById('save-mood-btn').addEventListener('click', saveMoodEntry);
+    
+    function saveMoodEntry() {
+        const entry = document.getElementById('journal-entry').value.trim();
+        const saveMessage = document.getElementById('save-message');
+
+        if (!selectedMood) {
+            saveMessage.textContent = 'Please select a mood first.';
+            saveMessage.style.color = 'red';
+            saveMessage.style.display = 'block';
+            setTimeout(() => saveMessage.style.display = 'none', 2000);
+            return;
+        }
+
+        const now = new Date();
+        const dateString = now.toLocaleDateString();
+
+        // Load existing entries
+        let entries = JSON.parse(localStorage.getItem('mindGuideJournal')) || [];
+
+        // Create new entry
+        const newEntry = {
+            date: dateString,
+            time: now.toLocaleTimeString(),
+            mood: selectedMood,
+            entry: entry || 'No written reflection.',
+        };
+        
+        // Add new entry and save
+        entries.push(newEntry);
+        localStorage.setItem('mindGuideJournal', JSON.stringify(entries));
+
+        // Display success message
+        saveMessage.textContent = 'Check-in Saved!';
+        saveMessage.style.color = 'var(--primary-color)';
+        saveMessage.style.display = 'block';
+
+        // Reset UI
+        document.getElementById('journal-entry').value = '';
+        document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+        selectedMood = null;
+        loadMoodHistory(); // Refresh history
+        
+        setTimeout(() => saveMessage.style.display = 'none', 2000);
+    }
+
+    // Load History on page load
+    loadMoodHistory();
+
+    function loadMoodHistory() {
+        const historyList = document.getElementById('mood-history-list');
+        historyList.innerHTML = ''; // Clear existing list
+        
+        let entries = JSON.parse(localStorage.getItem('mindGuideJournal')) || [];
+        
+        // Show only the last 5 entries
+        const lastFive = entries.slice(-5).reverse();
+
+        if (lastFive.length === 0) {
+            historyList.innerHTML = '<li>No history yet. Make a check-in!</li>';
+            return;
+        }
+
+        lastFive.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.date} - ${item.mood}: "${item.entry.substring(0, 30)}${item.entry.length > 30 ? '...' : ''}"`;
+            historyList.appendChild(li);
+        });
+    }
+
+});
+
+
+// --- 2. Focus Timer (Pomodoro) ---
+
+let timer;
+let timeLeft;
+let isRunning = false;
+let isWorkMode = true;
+
+// Pomodoro times in seconds
+const WORK_TIME = 25 * 60; 
+const BREAK_TIME = 5 * 60;
+
+const timerDisplay = document.getElementById('timer-display');
+const startBtn = document.getElementById('start-btn');
+const resetBtn = document.getElementById('reset-btn');
+const currentMode = document.getElementById('current-mode');
+
+// Initialize
+timeLeft = WORK_TIME;
+updateDisplay();
+
+startBtn.addEventListener('click', toggleTimer);
+resetBtn.addEventListener('click', resetTimer);
+
+function updateDisplay() {
+    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+    const seconds = String(timeLeft % 60).padStart(2, '0');
+    timerDisplay.textContent = `${minutes}:${seconds}`;
+    document.title = `${minutes}:${seconds} | MindGuide Focus`;
 }
 
-// Therapy & Music
-const moodButtons = document.querySelectorAll('.mood-btn');
-const therapyOutput = document.getElementById('therapyOutput');
-const spotifyPlayer = document.getElementById('spotifyPlayer');
+function toggleTimer() {
+    if (isRunning) {
+        clearInterval(timer);
+        startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+        isRunning = false;
+    } else {
+        timer = setInterval(countdown, 1000);
+        startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+        isRunning = true;
+    }
+}
 
-const defaultLinks = {
-    happy:'https://open.spotify.com/embed/playlist/37i9dQZF1DXdPec7aLTmlC',
-    sad:'https://open.spotify.com/embed/playlist/37i9dQZF1DX7qK8ma5wgG1',
-    stressed:'https://open.spotify.com/embed/playlist/37i9dQZF1DX3rxVfibe1L0'
-};
+function countdown() {
+    timeLeft--;
+    updateDisplay();
 
-moodButtons.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-        const mood = btn.dataset.mood;
-        let msg = '';
-        if(mood==='happy'){ msg = 'You seem happy! Keep that positivity flowing!'; }
-        if(mood==='sad'){ msg = 'Feeling sad is okay. Take deep breaths and reflect gently.'; }
-        if(mood==='stressed'){ msg = 'Stress is normal. Try a short meditation or walk.'; }
-        therapyOutput.innerHTML = msg;
-        spotifyPlayer.src = localStorage.getItem(mood+'Link') || defaultLinks[mood];
-    });
-});
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        isRunning = false;
+        
+        // Play a simple alert sound (Optional: you can replace with a custom sound)
+        // NOTE: The user must click or interact with the page once for sound to work in modern browsers.
+        // new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3').play();
 
-// Settings save
-document.getElementById('saveSettings').addEventListener('click', ()=>{
-    ['happy','sad','stressed'].forEach(mood=>{
-        const val = document.getElementById(mood+'Link').value.trim();
-        if(val) localStorage.setItem(mood+'Link', val);
-    });
-    document.getElementById('settingsOutput').innerText = 'Links saved locally!';
-});
+        // Switch modes
+        isWorkMode = !isWorkMode;
+        
+        if (isWorkMode) {
+            timeLeft = WORK_TIME;
+            currentMode.textContent = 'Work (25 min)';
+        } else {
+            timeLeft = BREAK_TIME;
+            currentMode.textContent = 'Break (5 min)';
+        }
+        
+        updateDisplay();
+        startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+        
+        // Automatically start the next session after a short pause
+        setTimeout(toggleTimer, 3000);
+    }
+}
 
-// Career Recommender
-document.getElementById('careerBtnCompute').addEventListener('click', ()=>{
-    const checkboxes = document.querySelectorAll('.career-checkbox');
-    const selected = [];
-    checkboxes.forEach(cb=>{ if(cb.checked) selected.push(cb.value); });
-    let path = '';
-    if(selected.includes('Programming')) path += 'Suggested Path: Software Developer\nSkills: HTML, CSS, JS, Python\n30-day roadmap: Build small apps daily.\n';
-    if(selected.includes('Design')) path += 'Suggested Path: UX/UI Designer\nSkills: Figma, Photoshop\n30-day roadmap: Redesign 1 app interface daily.\n';
-    if(selected.includes('Marketing')) path += 'Suggested Path: Digital Marketer\nSkills: SEO, Social Media Marketing\n30-day roadmap: Run mock campaigns.\n';
-    if(selected.includes('Writing')) path += 'Suggested Path: Content Writer\nSkills: Blogging, Copywriting\n30-day roadmap: Write 1 article daily.\n';
-    if(selected.includes('Leadership')) path += 'Suggested Path: Team Lead / Manager\nSkills: Communication, Management\n30-day roadmap: Lead small projects.\n';
-    document.getElementById('careerOutput').innerText = path || 'Select at least one interest!';
-});
+function resetTimer() {
+    clearInterval(timer);
+    isRunning = false;
+    isWorkMode = true;
+    timeLeft = WORK_TIME;
+    updateDisplay();
+    startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+    currentMode.textContent = 'Work (25 min)';
+}
