@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mind Guide</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>Mind Guide</header>
+
+<nav>
+    <button id="therapyBtn" class="active">Therapy & Music</button>
+    <button id="careerBtn">Career Recommender</button>
+    <button id="settingsBtn">Settings</button>
+</nav>
+
+<section id="therapy" class="active">
+    <h2>Therapy & Mood Music</h2>
+    <p>Select your mood:</p>
+    <div>
+        <button class="mood-btn" data-mood="happy">😊 Happy</button>
+        <button class="mood-btn" data-mood="sad">😢 Sad</button>
+        <button class="mood-btn" data-mood="stressed">😰 Stressed</button>
+    </div>
+    <div class="output" id="therapyOutput"></div>
+    <iframe id="spotifyPlayer" src="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+</section>
+
+<section id="career">
+    <h2>Career Recommender</h2>
+    <p>Select your interests/strengths:</p>
+    <div>
+        <input type="checkbox" class="career-checkbox" value="Programming"> Programming<br>
+        <input type="checkbox" class="career-checkbox" value="Design"> Design<br>
+        <input type="checkbox" class="career-checkbox" value="Marketing"> Marketing<br>
+        <input type="checkbox" class="career-checkbox" value="Writing"> Writing<br>
+        <input type="checkbox" class="career-checkbox" value="Leadership"> Leadership<br>
+    </div>
+    <button id="careerBtnCompute">Get Suggested Path</button>
+    <div class="output" id="careerOutput"></div>
+</section>
+
+<section id="settings">
+    <h2>Settings</h2>
+    <p>Paste your own Spotify link for each mood:</p>
+    <label>Happy:</label><input type="text" id="happyLink" placeholder="Spotify track/playlist/album link"><br>
+    <label>Sad:</label><input type="text" id="sadLink" placeholder="Spotify track/playlist/album link"><br>
+    <label>Stressed:</label><input type="text" id="stressedLink" placeholder="Spotify track/playlist/album link"><br>
+    <button id="saveSettings">Save Links</button>
+    <div class="output" id="settingsOutput"></div>
+</section>
+
+<script src="script.js"></script>
+
+</body>
+</html>
