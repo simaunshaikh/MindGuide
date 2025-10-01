@@ -1,190 +1,69 @@
-:root {
-    --primary-color: #4CAF50; /* Green */
-    --accent-color: #FF9800; /* Orange */
-    --bg-light: #f4f7f6;
-    --text-dark: #333;
-    --card-bg: #ffffff;
-    --shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-light);
-    color: var(--text-dark);
-    line-height: 1.6;
-    padding-bottom: 50px; 
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 20px 15px 0; 
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
 }
 
 h1 {
-    font-size: 1.8em;
-    margin-bottom: 5px;
+  margin-bottom: 10px;
+  color: #333;
 }
 
-main {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 0 15px;
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
-.card {
-    background: var(--card-bg);
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.card h2 {
-    color: var(--primary-color);
-    margin-bottom: 15px;
-    font-size: 1.5em;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* --- Tabs/Navigation --- */
-.tabs {
-    display: flex;
-    justify-content: center;
-    margin-top: 15px;
+.happy { background-color: #f9c74f; }
+.sad { background-color: #577590; }
+.stressed { background-color: #f94144; }
+.angry { background-color: #d00000; }
+.relax { background-color: #43aa8b; }
+.energetic { background-color: #f3722c; }
+
+.msg {
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 18px;
+  min-height: 40px;
+  color: #333;
 }
 
-.tab-btn {
-    flex: 1;
-    max-width: 250px;
-    background-color: #5cb85c; 
-    color: white;
-    padding: 12px 15px;
-    margin: 0 5px;
-    border-radius: 8px 8px 0 0;
-    font-size: 1em;
-    transition: background-color 0.2s;
-}
-
-.tab-btn:hover {
-    background-color: #4cae4c;
-}
-
-.tab-btn.active {
-    background-color: var(--card-bg);
-    color: var(--primary-color);
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-    font-weight: bold;
-    border-bottom: none;
-}
-
-.view {
-    padding-top: 5px; 
-}
-
-/* --- Mood Options --- */
-.mood-options {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.mood-options .mood-btn {
-    flex: 1;
-    min-width: 100px;
-    background-color: #e0e0e0;
-    color: var(--text-dark);
-    padding: 12px 8px;
-    font-size: 1.1em;
-}
-.mood-options .mood-btn:hover {
-    background-color: #d1d1d1;
-}
-.mood-options .mood-btn.selected {
-    background-color: var(--primary-color);
-    color: white;
-    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.5);
-    transform: translateY(-2px);
-}
-
-/* --- Journal & Save Button --- */
-#journal-entry {
-    width: 100%;
-    margin: 15px 0;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    resize: vertical;
-    min-height: 150px;
-    font-family: inherit;
-    font-size: 1em;
-}
-
-#save-journal-btn {
-    background-color: var(--accent-color);
-    color: white;
-    width: 100%;
-    padding: 15px;
-    font-size: 1.1em;
-}
-#save-journal-btn:hover {
-    background-color: #f57c00;
-}
-
-.message {
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    display: none;
-}
-
-/* --- History/Lists --- */
-.history-container {
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-.history-container h3 {
-    font-size: 1.2em;
-    color: #666;
-    margin-bottom: 10px;
-}
-
-#mood-history-list, #journal-history-list {
-    list-style: none;
-    padding: 0;
-}
-
-#mood-history-list li, #journal-history-list li {
-    background-color: #f9f9f9;
-    padding: 10px 12px;
-    border-radius: 6px;
-    margin-bottom: 6px;
-    border-left: 4px solid var(--accent-color);
-    font-size: 0.95em;
-}
-
-/* --- Footer --- */
-footer {
-    text-align: center;
-    padding: 10px;
-    color: #999;
-    font-size: 0.8em;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: var(--card-bg);
-    border-top: 1px solid #eee;
+.player iframe {
+  width: 100%;
+  height: 380px;
+  border-radius: 12px;
+  margin-top: 15px;
 }
