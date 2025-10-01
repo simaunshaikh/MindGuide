@@ -7,20 +7,22 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h2>Therapy & Music App</h2>
-  <p>Select your mood</p>
+  <div class="container">
+    <h1>Therapy & Music App</h1>
+    <p>Select your mood:</p>
 
-  <div class="buttons">
-    <button onclick="showTherapy('Happy', 'https://open.spotify.com/embed/playlist/37i9dQZF1DXdPec7aLTmlC')">Happy</button>
-    <button onclick="showTherapy('Sad', 'https://open.spotify.com/embed/playlist/37i9dQZF1DWVrtsSlLKzro')">Sad</button>
-    <button onclick="showTherapy('Stressed', 'https://open.spotify.com/embed/playlist/37i9dQZF1DWXe9gFZP0gtP')">Stressed</button>
-    <button onclick="showTherapy('Angry', 'https://open.spotify.com/embed/playlist/37i9dQZF1DX1g0iEXLFycr')">Angry</button>
-    <button onclick="showTherapy('Relax', 'https://open.spotify.com/embed/playlist/37i9dQZF1DX3Ogo9pFvBkY')">Relax</button>
-    <button onclick="showTherapy('Energetic', 'https://open.spotify.com/embed/playlist/37i9dQZF1DX8FwnYE6PRvL')">Energetic</button>
+    <div class="buttons">
+      <button class="happy" onclick="showTherapy('Happy', 'https://open.spotify.com/embed/playlist/37i9dQZF1DXdPec7aLTmlC')">Happy</button>
+      <button class="sad" onclick="showTherapy('Sad', 'https://open.spotify.com/embed/playlist/37i9dQZF1DWVrtsSlLKzro')">Sad</button>
+      <button class="stressed" onclick="showTherapy('Stressed', 'https://open.spotify.com/embed/playlist/37i9dQZF1DWXe9gFZP0gtP')">Stressed</button>
+      <button class="angry" onclick="showTherapy('Angry', 'https://open.spotify.com/embed/playlist/37i9dQZF1DX1g0iEXLFycr')">Angry</button>
+      <button class="relax" onclick="showTherapy('Relax', 'https://open.spotify.com/embed/playlist/37i9dQZF1DX3Ogo9pFvBkY')">Relax</button>
+      <button class="energetic" onclick="showTherapy('Energetic', 'https://open.spotify.com/embed/playlist/37i9dQZF1DX8FwnYE6PRvL')">Energetic</button>
+    </div>
+
+    <div class="msg" id="message"></div>
+    <div class="player" id="music"></div>
   </div>
-
-  <div class="msg" id="message"></div>
-  <div class="player" id="music"></div>
 
   <script src="script.js"></script>
 </body>
